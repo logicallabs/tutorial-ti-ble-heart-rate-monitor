@@ -3,7 +3,11 @@ var
 ;
 
 BluetoothLE.addEventListener('moduleReady', function() {
-	$.label.text = 'BLE Module is ready!';
+	$.moduleStatus.update('BLE Module is ready!');
 });
+
+function checkBatteryStatus() {
+	alert('Check battery status button tapped!');
+}
 
 $.index.open();

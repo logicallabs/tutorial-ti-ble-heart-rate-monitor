@@ -1,5 +1,19 @@
 <Alloy>
-	<Window class="container">
-		<Label id="label">Hello, World</Label>
+	<Window layout="vertical" backgroundColor="white">
+		<Label id="header">Heart Rate Monitor Example</Label>
+		<Require type="widget" src="display" id="moduleStatus"
+			preText="Module Status:"/>
+		<Require type="widget" src="display" id="scanStatus"
+			preText="Scan Status:"/>
+		<Require type="widget" src="display" id="peripheralStatus"
+			preText="Peripheral Status:"/>
+		<Require type="widget" src="display" id="peripheralName"
+			preText="Peripheral Name:"/>
+		<Require type="widget" src="display" id="heartRate"
+			preText="Heart Rate:" postText="bpm"/>
+		<Require type="widget" src="display" id="batteryStatus"
+			preText="Battery Status:" postText="%"/>
+		<Button title="Check Battery Status" id="batteryButton" visible=false
+			onClick="checkBatteryStatus" top=20/>
 	</Window>
 </Alloy>
