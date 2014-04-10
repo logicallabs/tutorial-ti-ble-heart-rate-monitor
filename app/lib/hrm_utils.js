@@ -5,7 +5,9 @@ var
 	BLEUtils = Alloy.Globals.BLEUtils,
 	HR_SERVICE_UUID = '0000180d-0000-1000-8000-00805f9b34fb',
 	BATTERY_SERVICE_UUID = '180f',
-	connectedPeripheral
+	HR_CHAR_UUID = '00002a37-0000-1000-8000-00805f9b34fb',
+	BATTERY_LEVEL_CHAR_UUID = '2a19',
+	connectedPeripheral, batteryChar
 ;
 
 function digestServices(e) {
@@ -18,15 +20,44 @@ function digestServices(e) {
 		Ti.API.info('Discovered service ' + service.UUID);
 		if (BLEUtils.uuidMatch(service.UUID, HR_SERVICE_UUID)) {
 			Ti.API.info('Found heart rate service!');
+			e.source.discoverCharacteristics({
+				service: service
+			});
 		}
 		if (BLEUtils.uuidMatch(service.UUID, BATTERY_SERVICE_UUID)) {
 			Ti.API.info('Found battery service!');
+			e.source.discoverCharacteristics({
+				service: service
+			});
 		}
 	});
 }
 
 function digestCharacteristics(e) {
-	Ti.API.info('Received discoveredCharacteristics event');
+	var characteristics;
+	
+	if (e.errorCode !== undefined) {
+		Ti.API.error('Error while discovering characteristics: ' +
+					e.errorCode + '/' + e.errorDomain + '/' +
+					e.errorDescription);
+		return;
+	}
+	characteristics = e.service.characteristics;
+	characteristics.forEach(function(characteristic) {
+		Ti.API.info('characteristic.UUID: '  + characteristic.UUID);
+		if (BLEUtils.uuidMatch(characteristic.UUID, HR_CHAR_UUID)) {
+			if (BLEUtils.canSubscribeTo(characteristic)) {
+				Ti.API.info('Found heart rate characteristic, will subscribe...');
+				connectedPeripheral.subscribeToCharacteristic(characteristic);
+			} else {
+				Ti.API.error('Found heart rate characterisic but can\'t subscribe...');
+			}
+		}
+		
+		if (BLEUtils.uuidMatch(characteristic.UUID, BATTERY_LEVEL_CHAR_UUID)) {
+			batteryChar = characteristic;
+		}
+	});	
 }
 
 function digestNewCharValue(e) {

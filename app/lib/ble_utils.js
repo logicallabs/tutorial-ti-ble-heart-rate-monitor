@@ -123,3 +123,8 @@ function uuidMatch(uuid1, uuid2) {
 }
 	
 exports.uuidMatch = uuidMatch;
+
+exports.canSubscribeTo = function(characteristic) {
+	return characteristic.properties & BluetoothLE.CHAR_PROP_NOTIFY ||
+	characteristic.properties & BluetoothLE.CHAR_PROP_INDICATE;
+};
