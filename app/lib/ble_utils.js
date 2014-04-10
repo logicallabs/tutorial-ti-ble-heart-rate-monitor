@@ -100,3 +100,26 @@ exports.initCentral = function(params) {
 		BluetoothLE.initCentralManager();
 	}
 };
+
+var BASE_UUID = '00000000-0000-1000-8000-00805F9B34FB';
+exports.BASE_UUID = BASE_UUID;
+
+function expandUUID(uuid) {
+	var result;
+	if (uuid.length === 4) {
+		result = BASE_UUID.substring(0, 4) + uuid +
+				BASE_UUID.substring(8, BASE_UUID.length);
+	} else {
+		result = uuid;
+	}
+	
+	return result;
+}
+
+exports.expandUUID = expandUUID;
+
+function uuidMatch(uuid1, uuid2) {
+	return expandUUID(uuid1).toLowerCase() === expandUUID(uuid2).toLowerCase(); 
+}
+	
+exports.uuidMatch = uuidMatch;

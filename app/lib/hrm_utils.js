@@ -4,11 +4,25 @@ var
 	BluetoothLE = Alloy.Globals.BluetoothLE,
 	BLEUtils = Alloy.Globals.BLEUtils,
 	HR_SERVICE_UUID = '0000180d-0000-1000-8000-00805f9b34fb',
+	BATTERY_SERVICE_UUID = '180f',
 	connectedPeripheral
 ;
 
 function digestServices(e) {
-	Ti.API.info('Received discoveredServices event');
+	var services;
+	
+	// e.source is the peripheral sending the discoveredServices event
+	services = e.source.services;
+	
+	services.forEach(function(service) {
+		Ti.API.info('Discovered service ' + service.UUID);
+		if (BLEUtils.uuidMatch(service.UUID, HR_SERVICE_UUID)) {
+			Ti.API.info('Found heart rate service!');
+		}
+		if (BLEUtils.uuidMatch(service.UUID, BATTERY_SERVICE_UUID)) {
+			Ti.API.info('Found battery service!');
+		}
+	});
 }
 
 function digestCharacteristics(e) {
@@ -43,5 +57,6 @@ exports.setConnectedPeripheral = function(newConnectedPeripheral) {
 		connectedPeripheral.addEventListener('discoveredServices', digestServices);
 		connectedPeripheral.addEventListener('discoveredCharacteristics', digestCharacteristics);
 		connectedPeripheral.addEventListener('updatedValueForCharacteristic', digestNewCharValue);
+		connectedPeripheral.discoverServices();
 	}
 };
