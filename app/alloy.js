@@ -11,3 +11,5 @@
 // Alloy.Globals.someGlobalFunction = function(){};
 
 Alloy.Globals.BluetoothLE = require('com.logicallabs.bluetoothle');
+Alloy.Globals.BLEUtils = require('ble_utils');
+Alloy.Globals.HRMUtils = require('hrm_utils');
