@@ -78,6 +78,23 @@ BluetoothLE.addEventListener('connectedPeripheral', function(e) {
 	$.batteryButton.visible = true;
 });
 
+BluetoothLE.addEventListener('failedToConnectPeripheral', function(e) {
+	$.peripheralStatus.update('Failed to connect');
+	$.peripheralName.update(e.peripheral.name);
+	alert('Failed to connect to peripheral ' + e.peripheral.name);
+	startScan();
+});
+
+BluetoothLE.addEventListener('disconnectedPeripheral', function(e) {
+	if (HRMUtils.getConnectedPeripheral().equals(e.peripheral)) {
+		$.peripheralStatus.update('Disconnected');
+		$.peripheralName.update(e.peripheral.name);
+		HRMUtils.setConnectedPeripheral(null);
+		$.batteryButton.visible = false;
+		startScan();
+	}
+});
+
 function checkBatteryStatus() {
 	alert('Check battery status button tapped!');
 }
