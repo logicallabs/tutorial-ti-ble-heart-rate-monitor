@@ -96,11 +96,15 @@ BluetoothLE.addEventListener('disconnectedPeripheral', function(e) {
 });
 
 function checkBatteryStatus() {
-	alert('Check battery status button tapped!');
+	HRMUtils.checkBatteryStatus();
 }
 
 Ti.App.addEventListener('heartRateUpdate', function(e) {
 	$.heartRate.update(e.heartRateMeasurement);
+});
+
+Ti.App.addEventListener('batteryStatusUpdate', function(e) {
+	$.batteryStatus.update(e.batteryStatus);
 });
 
 $.index.open();

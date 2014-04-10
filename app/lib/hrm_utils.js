@@ -76,6 +76,18 @@ function digestNewCharValue(e) {
 						heartRateMeasurement: e.characteristic.value[1]
 					}
 				);
+			} else if (e.characteristic.equals(batteryChar)) {
+				Ti.App.fireEvent(
+					'batteryStatusUpdate',
+					{
+						batteryStatus: e.characteristic.value[0]
+					}
+				);
+			} else {
+				Ti.API.error(
+						'Received value for char ' +
+						e.characteristic.UUID.toLowerCase() +
+						': ' + e.characteristic.value);
 			}
 		}
 	} else {
@@ -113,5 +125,11 @@ exports.setConnectedPeripheral = function(newConnectedPeripheral) {
 		connectedPeripheral.addEventListener('discoveredCharacteristics', digestCharacteristics);
 		connectedPeripheral.addEventListener('updatedValueForCharacteristic', digestNewCharValue);
 		connectedPeripheral.discoverServices();
+	}
+};
+
+exports.checkBatteryStatus = function() {
+	if (connectedPeripheral && batteryChar) {
+		connectedPeripheral.readValueForCharacteristic(batteryChar);
 	}
 };
