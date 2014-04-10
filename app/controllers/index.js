@@ -54,7 +54,28 @@ BluetoothLE.addEventListener('moduleReady', function() {
 });
 
 BluetoothLE.addEventListener('discoveredPeripheral', function(e) {
-	alert('Discovered peripheral!');
+	if (!HRMUtils.getConnectedPeripheral()) {
+		$.peripheralStatus.update('Discovered');
+		$.peripheralName.update(e.peripheral.name);
+		stopScan();
+		BluetoothLE.connectPeripheral({
+			peripheral: e.peripheral,
+			autoConnect: false
+		});
+	} else {
+		Ti.API.info('Received discoveredPeripheral event for previously discovered peripheral.');
+	}
+});
+
+BluetoothLE.addEventListener('connectedPeripheral', function(e) {
+	HRMUtils.setConnectedPeripheral(e.peripheral);
+	
+	$.peripheralStatus.update('Connected');
+	$.peripheralName.update(e.peripheral.name);
+	Ti.API.info('Connected peripheral: ' +
+						e.peripheral.name + '/' + e.peripheral.address);
+	
+	$.batteryButton.visible = true;
 });
 
 function checkBatteryStatus() {

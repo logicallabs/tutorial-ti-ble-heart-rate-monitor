@@ -7,10 +7,41 @@ var
 	connectedPeripheral
 ;
 
+function digestServices(e) {
+	Ti.API.info('Received discoveredServices event');
+}
+
+function digestCharacteristics(e) {
+	Ti.API.info('Received discoveredCharacteristics event');
+}
+
+function digestNewCharValue(e) {
+	Ti.API.info('Received updatedValueForCharacteristic event');
+}
+
 exports.getServiceUuid = function() {
 	return HR_SERVICE_UUID;
 };
 
+exports.getConnectedPeripheral = function() {
+	return connectedPeripheral;
+};
+
 exports.setConnectedPeripheral = function(newConnectedPeripheral) {
+	if (connectedPeripheral) {
+		BluetoothLE.cancelPeripheralConnection(connectedPeripheral);
+
+		connectedPeripheral.removeEventListener(
+				'discoveredServices', digestServices);
+			connectedPeripheral.removeEventListener(
+				'discoveredCharacteristics', digestCharacteristics);
+			connectedPeripheral.removeEventListener(
+				'updatedValueForCharacteristic', digestNewCharValue);
+	}
 	connectedPeripheral = newConnectedPeripheral;
+	if (connectedPeripheral) {
+		connectedPeripheral.addEventListener('discoveredServices', digestServices);
+		connectedPeripheral.addEventListener('discoveredCharacteristics', digestCharacteristics);
+		connectedPeripheral.addEventListener('updatedValueForCharacteristic', digestNewCharValue);
+	}
 };
