@@ -99,4 +99,8 @@ function checkBatteryStatus() {
 	alert('Check battery status button tapped!');
 }
 
+Ti.App.addEventListener('heartRateUpdate', function(e) {
+	$.heartRate.update(e.heartRateMeasurement);
+});
+
 $.index.open();

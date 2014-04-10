@@ -61,7 +61,31 @@ function digestCharacteristics(e) {
 }
 
 function digestNewCharValue(e) {
-	Ti.API.info('Received updatedValueForCharacteristic event');
+	if (e.characteristic) {
+		if (e.errorCode !== undefined) {
+			Ti.API.error('Error while reading char ' + e.characteristic.UUID + ' ' +
+						e.errorCode + '/' + e.errorDomain + '/' +
+						e.errorDescription);
+		} else {
+			if (BLEUtils.uuidMatch(e.characteristic.UUID, HR_CHAR_UUID)) {
+				Ti.API.info('Got heart rate update: ' +
+						e.characteristic.value[1] + 'bpm');
+				Ti.App.fireEvent(
+					'heartRateUpdate',
+					{
+						heartRateMeasurement: e.characteristic.value[1]
+					}
+				);
+			}
+		}
+	} else {
+		Ti.API.info('Received updatedValueForCharacteristic event without characteristic object.');
+		if (e.errorCode) {
+			Ti.API.error('Error while reading char: ' +
+						e.errorCode + '/' + e.errorDomain + '/' +
+						e.errorDescription);
+		}
+	}
 }
 
 exports.getServiceUuid = function() {
